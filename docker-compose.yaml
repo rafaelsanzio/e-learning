@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  database:
+    image: postgres
+    container_name: e-learning-db
+    restart: always
+    ports:
+      - ${TYPEORM_PORT}:5432
+    environment:
+      - POSTGRES_USER=${TYPEORM_USERNAME}
+      - POSTGRES_DB=${TYPEORM_DATABASE}
+      - POSTGRES_PASSWORD=${TYPEORM_PASSWORD}
+    volumes:
+      - pgdata:/data/postgres
+
+  app:
+    build: .
+    container_name: e-learning-app
+    ports:
+      - ${APP_PORT}:3000
+    volumes:
+      - .:/usr/app
+    links:
+      - database
+    depends_on:
+      - database
+
+volumes:
+  pgdata:
+    driver: local
